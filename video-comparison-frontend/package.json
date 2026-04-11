@@ -1,0 +1,30 @@
+{
+  "name": "video-comparison-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "shx cp node_modules/mediainfo.js/dist/MediaInfoModule.wasm public/"
+  },
+  "dependencies": {
+    "lucide-react": "^0.400.0",
+    "mediainfo.js": "^0.2.2",
+    "next": "^16.2.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-dropzone": "^14.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "shx": "^0.3.4",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.0.0"
+  }
+}
