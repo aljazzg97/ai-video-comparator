@@ -1,0 +1,16 @@
+# Backend
+video-comparison-backend/.env
+video-comparison-backend/venv/
+video-comparison-backend/__pycache__/
+video-comparison-backend/*.pyc
+video-comparison-backend/.python-version
+
+# Frontend
+video-comparison-frontend/.env.local
+video-comparison-frontend/.next/
+video-comparison-frontend/node_modules/
+video-comparison-frontend/public/MediaInfoModule.wasm
+
+# General
+.DS_Store
+*.log
