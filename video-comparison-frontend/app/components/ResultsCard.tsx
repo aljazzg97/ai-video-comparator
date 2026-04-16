@@ -26,25 +26,27 @@ export default function ResultsCard({ result, videoAName, videoBName }: ResultsC
   return (
     <div className="mt-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Winner Banner */}
-      <div className="rounded-xl bg-gradient-to-r from-blue-900/50 to-purple-900/50 p-6 border border-blue-800/50">
-        <div className="flex items-center gap-3">
-          <Trophy className="h-8 w-8 text-yellow-400" />
-          <div>
-            <h2 className="text-2xl font-bold text-white">
+      <div className="rounded-xl bg-gradient-to-r from-blue-900/50 to-purple-900/50 p-4 md:p-6 border border-blue-800/50">
+        <div className="flex items-start gap-3">
+          <Trophy className="h-6 w-6 md:h-8 md:w-8 text-yellow-400 flex-shrink-0 mt-1" />
+          <div className="min-w-0 flex-1">
+            <h2 className="text-xl md:text-2xl font-bold text-white break-words">
               {isTie ? "It's a Tie!" : `Winner: ${result.winner}`}
             </h2>
-            <p className="text-gray-300 mt-1">{result.summary}</p>
+            <p className="text-gray-300 mt-1 text-sm md:text-base break-words">
+              {result.summary}
+            </p>
           </div>
         </div>
       </div>
 
       {/* Side-by-side Pros/Cons */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Video A Column */}
-        <div className={`rounded-lg border p-5 ${
+        <div className={`rounded-lg border p-4 md:p-5 ${
           isVideoAWinner ? "border-green-500 bg-green-900/20" : "border-gray-700 bg-gray-800/40"
         }`}>
-          <h3 className={`text-lg font-semibold mb-3 ${
+          <h3 className={`text-base md:text-lg font-semibold mb-3 break-words ${
             isVideoAWinner ? "text-green-400" : "text-white"
           }`}>
             {videoAName}
@@ -54,13 +56,13 @@ export default function ResultsCard({ result, videoAName, videoBName }: ResultsC
           <div className="space-y-3">
             <div>
               <p className="text-sm font-medium text-green-400 flex items-center gap-1 mb-2">
-                <CheckCircle className="h-4 w-4" /> Pros
+                <CheckCircle className="h-4 w-4 flex-shrink-0" /> Pros
               </p>
               <ul className="space-y-1">
                 {result.pros_a.map((pro, i) => (
                   <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
-                    <span className="text-green-500 mt-1">•</span>
-                    {pro}
+                    <span className="text-green-500 mt-1 flex-shrink-0">•</span>
+                    <span className="break-words">{pro}</span>
                   </li>
                 ))}
               </ul>
@@ -68,13 +70,13 @@ export default function ResultsCard({ result, videoAName, videoBName }: ResultsC
             
             <div>
               <p className="text-sm font-medium text-red-400 flex items-center gap-1 mb-2">
-                <XCircle className="h-4 w-4" /> Cons
+                <XCircle className="h-4 w-4 flex-shrink-0" /> Cons
               </p>
               <ul className="space-y-1">
                 {result.cons_a.map((con, i) => (
                   <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
-                    <span className="text-red-500 mt-1">•</span>
-                    {con}
+                    <span className="text-red-500 mt-1 flex-shrink-0">•</span>
+                    <span className="break-words">{con}</span>
                   </li>
                 ))}
               </ul>
@@ -83,10 +85,10 @@ export default function ResultsCard({ result, videoAName, videoBName }: ResultsC
         </div>
 
         {/* Video B Column */}
-        <div className={`rounded-lg border p-5 ${
+        <div className={`rounded-lg border p-4 md:p-5 ${
           isVideoBWinner ? "border-green-500 bg-green-900/20" : "border-gray-700 bg-gray-800/40"
         }`}>
-          <h3 className={`text-lg font-semibold mb-3 ${
+          <h3 className={`text-base md:text-lg font-semibold mb-3 break-words ${
             isVideoBWinner ? "text-green-400" : "text-white"
           }`}>
             {videoBName}
@@ -96,13 +98,13 @@ export default function ResultsCard({ result, videoAName, videoBName }: ResultsC
           <div className="space-y-3">
             <div>
               <p className="text-sm font-medium text-green-400 flex items-center gap-1 mb-2">
-                <CheckCircle className="h-4 w-4" /> Pros
+                <CheckCircle className="h-4 w-4 flex-shrink-0" /> Pros
               </p>
               <ul className="space-y-1">
                 {result.pros_b.map((pro, i) => (
                   <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
-                    <span className="text-green-500 mt-1">•</span>
-                    {pro}
+                    <span className="text-green-500 mt-1 flex-shrink-0">•</span>
+                    <span className="break-words">{pro}</span>
                   </li>
                 ))}
               </ul>
@@ -110,13 +112,13 @@ export default function ResultsCard({ result, videoAName, videoBName }: ResultsC
             
             <div>
               <p className="text-sm font-medium text-red-400 flex items-center gap-1 mb-2">
-                <XCircle className="h-4 w-4" /> Cons
+                <XCircle className="h-4 w-4 flex-shrink-0" /> Cons
               </p>
               <ul className="space-y-1">
                 {result.cons_b.map((con, i) => (
                   <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
-                    <span className="text-red-500 mt-1">•</span>
-                    {con}
+                    <span className="text-red-500 mt-1 flex-shrink-0">•</span>
+                    <span className="break-words">{con}</span>
                   </li>
                 ))}
               </ul>
@@ -126,12 +128,14 @@ export default function ResultsCard({ result, videoAName, videoBName }: ResultsC
       </div>
 
       {/* Technical Verdict */}
-      <div className="rounded-lg border border-gray-700 bg-gray-800/40 p-5">
+      <div className="rounded-lg border border-gray-700 bg-gray-800/40 p-4 md:p-5">
         <h3 className="text-md font-semibold text-white flex items-center gap-2 mb-3">
-          <Sparkles className="h-5 w-5 text-purple-400" />
+          <Sparkles className="h-5 w-5 text-purple-400 flex-shrink-0" />
           Technical Verdict
         </h3>
-        <p className="text-gray-300 text-sm leading-relaxed">{result.technical_verdict}</p>
+        <p className="text-gray-300 text-sm leading-relaxed break-words">
+          {result.technical_verdict}
+        </p>
       </div>
     </div>
   );

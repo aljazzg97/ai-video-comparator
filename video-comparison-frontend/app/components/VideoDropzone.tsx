@@ -64,7 +64,7 @@ export default function VideoDropzone({
     },
     accept: ACCEPTED_VIDEO_TYPES,
     maxFiles: 1,
-    maxSize: 10 * 1024 * 1024 * 1024, // 10 GB max (optional)
+    maxSize: 100 * 1024 * 1024 * 1024, // 10 GB max (optional)
   });
 
   return (

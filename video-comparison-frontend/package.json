@@ -10,12 +10,15 @@
     "postinstall": "shx cp node_modules/mediainfo.js/dist/MediaInfoModule.wasm public/"
   },
   "dependencies": {
+    "@studio-freight/lenis": "^1.0.42",
+    "framer-motion": "^12.38.0",
     "lucide-react": "^0.400.0",
     "mediainfo.js": "^0.2.2",
     "next": "^16.2.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-dropzone": "^14.2.3"
+    "react-dropzone": "^14.2.3",
+    "react-type-animation": "^3.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

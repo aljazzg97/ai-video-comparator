@@ -1,118 +1,180 @@
 "use client";
 
 import { useState } from 'react';
-import { UltimateVideoMetadata } from '@/lib/mediaTypes';
-import { ChevronDown, ChevronRight, FileJson } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { VideoMetadata } from '@/lib/extractMetadata';
 
 interface UltimateMetadataViewerProps {
-  metadata: UltimateVideoMetadata;
+  metadata: VideoMetadata;
   label: string;
 }
 
 export default function UltimateMetadataViewer({ metadata, label }: UltimateMetadataViewerProps) {
-  const [activeTab, setActiveTab] = useState<'general' | 'video' | 'audio' | 'text' | 'raw'>('video');
-  const [expandedTracks, setExpandedTracks] = useState<Record<string, boolean>>({});
+  const [activeTab, setActiveTab] = useState<'video' | 'audio' | 'hdr' | 'container' | 'raw'>('video');
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    video: true,
+    audio: true,
+    hdr: true,
+    container: true,
+  });
 
   const tabs = [
-    { id: 'general', label: 'General', count: metadata.general ? 1 : 0 },
-    { id: 'video', label: 'Video', count: metadata.video.length },
-    { id: 'audio', label: 'Audio', count: metadata.audio.length },
-    { id: 'text', label: 'Text', count: metadata.text.length },
-    { id: 'raw', label: 'Raw JSON', count: 0 },
+    { id: 'video', label: 'Video' },
+    { id: 'audio', label: 'Audio' },
+    { id: 'hdr', label: 'HDR / Color' },
+    { id: 'container', label: 'Container' },
+    { id: 'raw', label: 'Raw JSON' },
   ] as const;
 
-  const toggleTrack = (trackId: string) => {
-    setExpandedTracks(prev => ({ ...prev, [trackId]: !prev[trackId] }));
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const renderTrackTable = (track: any, type: string, index?: number) => {
-    const trackId = `${type}-${index ?? 0}`;
-    const isExpanded = expandedTracks[trackId] ?? (type === 'general' || type === 'raw');
-    
-    const entries = Object.entries(track).filter(([key]) => 
-      key !== '@type' && key !== 'extra' && typeof track[key] !== 'object'
-    );
-
-    if (entries.length === 0) return null;
-
-    return (
-      <div key={trackId} className="mb-3 border border-gray-700 rounded-lg overflow-hidden bg-gray-800/30">
-        <button
-          onClick={() => toggleTrack(trackId)}
-          className="w-full px-3 py-2 flex items-center gap-2 text-left hover:bg-gray-700/30 transition-colors"
-        >
-          {isExpanded ? <ChevronDown className="h-4 w-4 text-gray-400" /> : <ChevronRight className="h-4 w-4 text-gray-400" />}
-          <span className="text-sm font-medium text-gray-200">
-            {type === 'general' ? 'General' : `${type} Track ${index !== undefined ? `#${index + 1}` : ''}`}
-            {track.Format && <span className="ml-2 text-xs text-blue-400 font-normal">({track.Format})</span>}
-          </span>
-        </button>
-        {isExpanded && (
-          <div className="px-3 pb-3 pt-1 border-t border-gray-700/50">
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-              {entries.map(([key, value]) => (
-                <div key={key} className="contents">
-                  <span className="text-gray-400 py-0.5">{key.replace(/_/g, ' ')}:</span>
-                  <span className="text-gray-200 font-mono py-0.5 break-all">{String(value)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'general':
-        return metadata.general ? renderTrackTable(metadata.general, 'general') : <p className="text-gray-400 p-4">No general information found.</p>;
-      case 'video':
-        return metadata.video.length > 0 
-          ? metadata.video.map((track, i) => renderTrackTable(track, 'Video', i))
-          : <p className="text-gray-400 p-4">No video tracks found.</p>;
-      case 'audio':
-        return metadata.audio.length > 0 
-          ? metadata.audio.map((track, i) => renderTrackTable(track, 'Audio', i))
-          : <p className="text-gray-400 p-4">No audio tracks found.</p>;
-      case 'text':
-        return metadata.text.length > 0 
-          ? metadata.text.map((track, i) => renderTrackTable(track, 'Text', i))
-          : <p className="text-gray-400 p-4">No text/subtitle tracks found.</p>;
-      case 'raw':
-        return (
-          <div className="p-3">
-            <pre className="text-xs text-gray-300 overflow-auto max-h-96 bg-gray-900/50 p-3 rounded border border-gray-700">
-              {JSON.stringify(metadata.raw || metadata, null, 2)}
-            </pre>
-          </div>
-        );
+  const formatValue = (value: any): string => {
+    if (value === null || value === undefined) return 'N/A';
+    if (typeof value === 'number') {
+      // Format large numbers with commas
+      if (value > 1000000) return value.toLocaleString();
+      return String(value);
     }
+    return String(value);
+  };
+
+  const renderKeyValuePairs = (data: Record<string, any>, excludeKeys: string[] = []) => {
+    return Object.entries(data)
+      .filter(([key]) => !excludeKeys.includes(key) && !key.startsWith('_'))
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, value]) => (
+        <div key={key} className="grid grid-cols-2 gap-2 py-1 border-b border-gray-700/30 last:border-0">
+          <span className="text-gray-400 text-xs font-medium break-words">{key.replace(/([A-Z])/g, ' $1').trim()}:</span>
+          <span className="text-gray-200 text-xs font-mono break-all">{formatValue(value)}</span>
+        </div>
+      ));
+  };
+
+  const videoFields = {
+    Codec: metadata.videoCodec,
+    'Codec ID': metadata.videoCodecID,
+    Profile: metadata.videoFormatProfile,
+    Level: metadata.videoFormatLevel,
+    Tier: metadata.videoFormatTier,
+    'Format Settings': metadata.videoFormatSettings,
+    Resolution: metadata.resolution,
+    'Display Aspect Ratio': metadata.displayAspectRatio,
+    'Pixel Aspect Ratio': metadata.pixelAspectRatio,
+    'Frame Rate': metadata.frameRate ? `${metadata.frameRate} fps` : null,
+    'Frame Rate Mode': metadata.frameRateMode,
+    'Frame Count': metadata.frameCount,
+    'Bit Depth': metadata.bitDepth ? `${metadata.bitDepth}-bit` : null,
+    'Chroma Subsampling': metadata.chromaSubsampling,
+    'Chroma Position': metadata.chromaSubsamplingPosition,
+    'Color Space': metadata.colorSpace,
+    'Scan Type': metadata.scanType,
+    'Video Bitrate': metadata.bitRate ? `${(metadata.bitRate / 1000000).toFixed(2)} Mbps` : null,
+    'Bitrate Mode': metadata.bitRateMode,
+    Delay: metadata.delay ? `${metadata.delay} ms` : null,
+    'Encoded Library': metadata.encodedLibrary,
+    'Library Settings': metadata.encodedLibrarySettings,
+  };
+
+  const hdrFields = {
+    'HDR Format': metadata.hdrFormat,
+    'HDR Profile': metadata.hdrFormatProfile,
+    'HDR Level': metadata.hdrFormatLevel,
+    'HDR Settings': metadata.hdrFormatSettings,
+    'HDR Compatibility': metadata.hdrFormatCompatibility,
+    'Color Range': metadata.colourRange,
+    'Color Primaries': metadata.colourPrimaries,
+    'Transfer Characteristics': metadata.transferCharacteristics,
+    'Matrix Coefficients': metadata.matrixCoefficients,
+    'Mastering Display Primaries': metadata.masteringDisplayColorPrimaries,
+    'Mastering Display Luminance': metadata.masteringDisplayLuminance,
+    'MaxCLL': metadata.maxCLL,
+    'MaxFALL': metadata.maxFALL,
+  };
+
+  const audioFields = {
+    Codec: metadata.audioCodec,
+    'Codec ID': metadata.audioCodecID,
+    Profile: metadata.audioFormatProfile,
+    Bitrate: metadata.audioBitRate ? `${(metadata.audioBitRate / 1000).toFixed(0)} kbps` : null,
+    'Bitrate Mode': metadata.audioBitRateMode,
+    Channels: metadata.audioChannels,
+    'Channel Layout': metadata.audioChannelLayout,
+    'Sampling Rate': metadata.audioSamplingRate ? `${metadata.audioSamplingRate} Hz` : null,
+    'Bit Depth': metadata.audioBitDepth ? `${metadata.audioBitDepth}-bit` : null,
+    Language: metadata.audioLanguage,
+    'Compression Mode': metadata.audioCompressionMode,
+  };
+
+  const containerFields = {
+    Container: metadata.container,
+    'File Size': `${(metadata.fileSize / (1024 * 1024 * 1024)).toFixed(2)} GB (${metadata.fileSize.toLocaleString()} bytes)`,
+    Duration: metadata.duration ? `${Math.floor(metadata.duration / 60)}m ${Math.floor(metadata.duration % 60)}s` : null,
+    'Overall Bitrate': metadata.overallBitRate ? `${(metadata.overallBitRate / 1000000).toFixed(2)} Mbps` : null,
+    'Overall Bitrate Mode': metadata.overallBitRateMode,
+    'Writing Application': metadata.writingApplication,
+    'Writing Library': metadata.writingLibrary,
   };
 
   return (
-    <div className="mt-4 border border-gray-700 rounded-lg bg-gray-800/30 overflow-hidden">
-      <div className="border-b border-gray-700 px-3 py-2 bg-gray-800/50">
-        <h3 className="text-md font-medium text-gray-200">{label}</h3>
+    <div className="mt-3 border border-gray-700 rounded-lg bg-gray-800/30 overflow-hidden">
+      <div className="border-b border-gray-700 bg-gray-800/50 px-3 py-2">
+        <h4 className="text-sm font-medium text-gray-200">{label} - Full Details</h4>
       </div>
-      <div className="flex border-b border-gray-700 bg-gray-800/20">
+      
+      {/* Tabs */}
+      <div className="flex border-b border-gray-700 bg-gray-800/20 overflow-x-auto">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
+            className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
               activeTab === tab.id 
                 ? 'text-blue-400 border-b-2 border-blue-400 bg-gray-800/40' 
                 : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700/30'
             }`}
           >
             {tab.label}
-            {tab.count > 0 && <span className="ml-1.5 text-xs opacity-75">({tab.count})</span>}
           </button>
         ))}
       </div>
-      <div className="p-3 max-h-96 overflow-y-auto">
-        {renderContent()}
+
+      {/* Content */}
+      <div className="p-3 max-h-80 overflow-y-auto">
+        {activeTab === 'video' && (
+          <div className="space-y-1">
+            {renderKeyValuePairs(videoFields as Record<string, any>)}
+          </div>
+        )}
+
+        {activeTab === 'audio' && (
+          <div className="space-y-1">
+            {renderKeyValuePairs(audioFields as Record<string, any>)}
+          </div>
+        )}
+
+        {activeTab === 'hdr' && (
+          <div className="space-y-1">
+            {Object.values(hdrFields).every(v => !v) ? (
+              <p className="text-gray-500 text-xs text-center py-4">No HDR metadata detected</p>
+            ) : (
+              renderKeyValuePairs(hdrFields as Record<string, any>)
+            )}
+          </div>
+        )}
+
+        {activeTab === 'container' && (
+          <div className="space-y-1">
+            {renderKeyValuePairs(containerFields as Record<string, any>)}
+          </div>
+        )}
+
+        {activeTab === 'raw' && (
+          <pre className="text-xs text-gray-300 overflow-auto max-h-64 bg-gray-900/50 p-2 rounded border border-gray-700">
+            {JSON.stringify(metadata, null, 2)}
+          </pre>
+        )}
       </div>
     </div>
   );
