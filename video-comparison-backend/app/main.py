@@ -21,10 +21,11 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "https://ai-video-comparator.vercel.app",  # Your Vercel frontend URL
-        "https://*.vercel.app", # Allow any Vercel subdomain (good for preview deployments)
+allow_origins=[
+    "http://localhost:3000",
+    "https://ai-video-comparator.vercel.app",
+    "https://*.vercel.app",
+]
     ],
     allow_credentials=True,
     allow_methods=["*"],
