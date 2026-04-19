@@ -1,4 +1,3 @@
-// lib/mediaTypes.ts
 export interface TrackBase {
   '@type': string;
   ID?: string;
@@ -21,7 +20,7 @@ export interface GeneralTrack extends TrackBase {
   FileSize?: string;
   Duration?: string;
   OverallBitRate?: string;
-  OverallBitRate_Mode?: string; // VBR/CBR
+  OverallBitRate_Mode?: string;
   FrameRate?: string;
   FrameCount?: string;
   StreamSize?: string;
@@ -49,7 +48,7 @@ export interface VideoTrack extends TrackBase {
   ColorSpace?: string;
   ChromaSubsampling?: string;
   BitDepth?: string;
-  ScanType?: string; // Progressive/Interlaced
+  ScanType?: string;
   ScanOrder?: string;
   Compression_Mode?: string;
   BitRate?: string;
@@ -68,7 +67,7 @@ export interface AudioTrack extends TrackBase {
   Duration?: string;
   BitRate?: string;
   BitRate_Mode?: string;
-  Channel(s)?: string;
+  Channel_s_?: string;  // MediaInfo uses "Channel(s)", sanitized to Channel_s_
   ChannelPositions?: string;
   SamplingRate?: string;
   SamplingCount?: string;
@@ -92,5 +91,5 @@ export interface UltimateVideoMetadata {
   video: VideoTrack[];
   audio: AudioTrack[];
   text: TextTrack[];
-  // You can also add 'menu', 'image' etc. as needed
+  raw?: any;
 }
