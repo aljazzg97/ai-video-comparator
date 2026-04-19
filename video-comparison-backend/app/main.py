@@ -23,8 +23,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "http://192.168.0.21:3000",
-        "https://*.vercel.app",
+        "https://ai-video-comparator.vercel.app",  # Your Vercel frontend URL
+        "https://*.vercel.app", # Allow any Vercel subdomain (good for preview deployments)
     ],
     allow_credentials=True,
     allow_methods=["*"],
