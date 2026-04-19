@@ -136,11 +136,11 @@ export default function VideoDropzone({
               <span>Bitrate:</span>
             </div>
 		<div className="font-mono text-blue-300">
-	{metadata.bitRate
-    ? metadata.bitRate >= 1000000
-      ? `${(metadata.bitRate / 1000000).toFixed(1)} Mbps`
-      : `${(metadata.bitRate / 1000).toFixed(0)} kbps`
-    : "N/A"}
+		{metadata.bitRate
+			? metadata.bitRate >= 1000000
+			? `${(metadata.bitRate / 1000000).toFixed(1)} Mbps`
+			: `${(metadata.bitRate / 1000).toFixed(0)} kbps`
+				: "N/A"}
 		</div>
           </div>
           {metadata.bitDepth && (
