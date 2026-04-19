@@ -14,7 +14,14 @@ import { TypeAnimation } from "react-type-animation";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      duration: 0.6, 
+      ease: [0.25, 0.1, 0.25, 1.0]  // Cubic bezier equivalent of "easeOut"
+    } 
+  },
 };
 
 interface AnalysisResult {
@@ -82,7 +89,7 @@ export default function Home() {
     setIsAnalyzing(true);
     setResult(null);
     try {
-      const response = await fetch("http://localhost:8000/api/compare", {
+		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compare`, {		
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ video_a: metadataA, video_b: metadataB }),
