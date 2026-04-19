@@ -2,7 +2,7 @@ declare module "mediainfo.js" {
   export interface MediaInfo {
     analyzeData(
       getSize: () => number,
-      readChunk: (chunkData: Uint8Array) => Promise<ArrayBuffer>
+      readChunk: (size: number, offset: number) => Promise<Uint8Array>
     ): Promise<any>;
     getInfo(): Promise<any>;
     close(): void;
@@ -15,6 +15,7 @@ declare module "mediainfo.js" {
     chunkSize?: number;
     coverData?: boolean;
     full?: boolean;
+    locateFile?: (path: string) => string;  // <-- ADD THIS LINE
   }
 
   export default function MediaInfoFactory(
