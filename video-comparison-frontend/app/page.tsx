@@ -12,6 +12,8 @@ import { extractMetadata, VideoMetadata } from "@/lib/extractMetadata";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
 
+
+
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0 },
@@ -76,29 +78,29 @@ export default function Home() {
     }
   }, []);
 
-  const handleAnalyze = async () => {
-    if (!metadataA || !metadataB) return;
-    setError(null);
-    setIsAnalyzing(true);
-    setResult(null);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compare`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ video_a: metadataA, video_b: metadataB }),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Analysis failed");
-      }
-      const data: AnalysisResult = await response.json();
-      setResult(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to connect to AI backend");
-    } finally {
-      setIsAnalyzing(false);
+const handleAnalyze = async () => {
+  if (!metadataA || !metadataB) return;
+  setError(null);
+  setIsAnalyzing(true);
+  setResult(null);
+  try {
+    const response = await fetch("https://compareai-d23a.onrender.com/api/compare", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ video_a: metadataA, video_b: metadataB }),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Analysis failed");
     }
-  };
+    const data: AnalysisResult = await response.json();
+    setResult(data);
+  } catch (err) {
+    setError(err instanceof Error ? err.message : "Failed to connect to AI backend");
+  } finally {
+    setIsAnalyzing(false);
+  }
+};
 
   const handleReset = () => {
     setFileA(null);
