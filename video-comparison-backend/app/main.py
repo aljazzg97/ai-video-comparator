@@ -5,7 +5,6 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from app.routers import compare
 
-# Initialize rate limiter
 limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
@@ -14,25 +13,21 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# Add rate limit exception handler
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-allow_origins=[
-    "http://localhost:3000",
-    "https://ai-video-comparator.vercel.app",
-    "https://*.vercel.app",
-]
+    allow_origins=[
+        "http://localhost:3000",
+        "https://ai-video-comparator.vercel.app",
+        "https://*.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include router with rate limit applied to the compare endpoint
 app.include_router(compare.router)
 
 @app.get("/")
