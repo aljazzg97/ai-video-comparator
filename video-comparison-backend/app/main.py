@@ -20,8 +20,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://ai-video-comparator.vercel.app",
-        "https://*.vercel.app",
+        "https://video-comparison-frontend.vercel.app",  # Add this exact domain
+        "https://ai-video-comparator.vercel.app",        # Keep just in case
+        "https://*.vercel.app",                          # Wildcard for previews
     ],
     allow_credentials=True,
     allow_methods=["*"],
