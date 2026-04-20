@@ -20,9 +20,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://video-comparison-frontend.vercel.app",  # Add this exact domain
-        "https://ai-video-comparator.vercel.app",        # Keep just in case
-        "https://*.vercel.app",                          # Wildcard for previews
+        "https://ai-video-comparator.vercel.app",
+        "https://video-comparison-frontend.vercel.app",
+        "https://video-comparison-frontend-*.vercel.app",  # Preview deployments
+        "https://*.vercel.app",  # General wildcard
     ],
     allow_credentials=True,
     allow_methods=["*"],
