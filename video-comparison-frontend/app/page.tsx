@@ -7,12 +7,11 @@ import ComparisonTable from "./components/ComparisonTable";
 import UltimateMetadataViewer from "./components/UltimateMetadataViewer";
 import FAQ from "./components/FAQ";
 import Logo from "./components/Logo";
+import WhySection from "./components/WhySection";
 import { Sparkles, Loader2, AlertCircle, ChevronDown, ChevronRight, Shield, Zap, Eye } from "lucide-react";
 import { extractMetadata, VideoMetadata } from "@/lib/extractMetadata";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
-
-
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -78,30 +77,29 @@ export default function Home() {
     }
   }, []);
 
-const handleAnalyze = async () => {
-  if (!metadataA || !metadataB) return;
-  setError(null);
-  setIsAnalyzing(true);
-  setResult(null);
-  try {
-	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compare`, {
-
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ video_a: metadataA, video_b: metadataB }),
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || "Analysis failed");
+  const handleAnalyze = async () => {
+    if (!metadataA || !metadataB) return;
+    setError(null);
+    setIsAnalyzing(true);
+    setResult(null);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compare`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ video_a: metadataA, video_b: metadataB }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Analysis failed");
+      }
+      const data: AnalysisResult = await response.json();
+      setResult(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to connect to AI backend");
+    } finally {
+      setIsAnalyzing(false);
     }
-    const data: AnalysisResult = await response.json();
-    setResult(data);
-  } catch (err) {
-    setError(err instanceof Error ? err.message : "Failed to connect to AI backend");
-  } finally {
-    setIsAnalyzing(false);
-  }
-};
+  };
 
   const handleReset = () => {
     setFileA(null);
@@ -215,46 +213,8 @@ const handleAnalyze = async () => {
         </div>
       </section>
 
-      {/* Trust Bar (animated) */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={fadeInUp}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="border-y border-gray-800 py-8 px-4"
-      >
-        <div className="max-w-5xl mx-auto">
-          <p className="text-center text-sm uppercase tracking-wider text-gray-500 mb-6">
-            Trusted by video engineers and archivists
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
-            <div className="text-gray-400 font-mono text-sm opacity-60 hover:opacity-100 transition-opacity">
-              MEDIAINFO ENGINE
-            </div>
-            <div className="text-gray-400 font-mono text-sm opacity-60 hover:opacity-100 transition-opacity">
-              DOLBY VISION
-            </div>
-            <div className="text-gray-400 font-mono text-sm opacity-60 hover:opacity-100 transition-opacity">
-              HDR10+
-            </div>
-            <div className="text-gray-400 font-mono text-sm opacity-60 hover:opacity-100 transition-opacity">
-              LOSSLESS AUDIO
-            </div>
-            <div className="text-gray-400 font-mono text-sm opacity-60 hover:opacity-100 transition-opacity">
-              BT.2020
-            </div>
-          </div>
-          <div className="mt-8 text-center">
-            <p className="text-gray-300 italic max-w-2xl mx-auto text-sm">
-              "Finally, a web tool that doesn't require uploading terabytes of footage. 
-              The AI analysis is surprisingly accurate — it caught a 8‑bit SDR file 
-              that was incorrectly tagged as HDR."
-            </p>
-            <p className="text-gray-500 text-xs mt-3">— Professional Colorist, LA</p>
-          </div>
-        </div>
-      </motion.section>
+      {/* Why Section */}
+      <WhySection />
 
       {/* How It Works (animated) */}
       <motion.section
@@ -475,6 +435,47 @@ const handleAnalyze = async () => {
                 Ensure your masters retain lossless audio, proper color primaries, and maximum dynamic range.
               </p>
             </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Trust Bar (animated) - MOVED HERE, before Privacy Badge */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="border-y border-gray-800 py-8 px-4"
+      >
+        <div className="max-w-5xl mx-auto">
+          <p className="text-center text-sm uppercase tracking-wider text-gray-500 mb-6">
+            Trusted by video engineers and archivists
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+            <div className="text-gray-400 font-mono text-sm opacity-60 hover:opacity-100 transition-opacity">
+              MEDIAINFO ENGINE
+            </div>
+            <div className="text-gray-400 font-mono text-sm opacity-60 hover:opacity-100 transition-opacity">
+              DOLBY VISION
+            </div>
+            <div className="text-gray-400 font-mono text-sm opacity-60 hover:opacity-100 transition-opacity">
+              HDR10+
+            </div>
+            <div className="text-gray-400 font-mono text-sm opacity-60 hover:opacity-100 transition-opacity">
+              LOSSLESS AUDIO
+            </div>
+            <div className="text-gray-400 font-mono text-sm opacity-60 hover:opacity-100 transition-opacity">
+              BT.2020
+            </div>
+          </div>
+          <div className="mt-8 text-center">
+            <p className="text-gray-300 italic max-w-2xl mx-auto text-sm">
+              "Finally, a web tool that doesn't require uploading terabytes of footage. 
+              The AI analysis is surprisingly accurate — it caught a 8‑bit SDR file 
+              that was incorrectly tagged as HDR."
+            </p>
+            <p className="text-gray-500 text-xs mt-3">— Professional Colorist, LA</p>
           </div>
         </div>
       </motion.section>
