@@ -9,6 +9,7 @@ from app.models import CompareRequest, CompareResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 limiter = Limiter(key_func=get_remote_address)
+from fastapi import APIRouter, HTTPException, Request
 
 # Load .env from backend root
 backend_root = Path(__file__).parent.parent.parent
@@ -67,13 +68,14 @@ You will receive comprehensive technical metadata for two video files, including
 }
 """
 
-@router.post("/compare", response_model=CompareResponse)
-@limiter.limit("30/hour")
-async def compare_videos(request: CompareRequest):
-    # Build enriched user message with all available metadata
+
+    @router.post("/compare", response_model=CompareResponse)
+    @limiter.limit("30/hour")
+    async def compare_videos(request: Request, compare_request: CompareRequest):  # <-- Add Request parameter
+    # Then use compare_request instead of request for the payload
     user_message = f"""
 Video A Metadata:
-- File Name: {request.video_a.fileName}
+- File Name: {compare_request.video_a.fileName}
 - File Size: {request.video_a.fileSize / (1024*1024*1024):.2f} GB ({request.video_a.fileSize} bytes)
 - Container: {request.video_a.container}
 - Duration: {request.video_a.duration or 'N/A'} s
