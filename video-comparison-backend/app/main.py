@@ -22,8 +22,8 @@ app.add_middleware(
         "http://localhost:3000",
         "https://ai-video-comparator.vercel.app",
         "https://video-comparison-frontend.vercel.app",
-        "https://video-comparison-frontend-*.vercel.app",  # Preview deployments
-        "https://*.vercel.app",  # General wildcard
+        "https://video-comparison-frontend-*.vercel.app",
+        "https://*.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],

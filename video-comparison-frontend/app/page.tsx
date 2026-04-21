@@ -84,7 +84,8 @@ const handleAnalyze = async () => {
   setIsAnalyzing(true);
   setResult(null);
   try {
-    const response = await fetch("https://compareai-d23a.onrender.com/api/compare", {
+	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compare`, {
+
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ video_a: metadataA, video_b: metadataB }),
